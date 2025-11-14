@@ -1,0 +1,278 @@
+Instruções gerais (para enviar ao candidato)
+•	Linguagem: Java 8+
+•	Tempo sugerido: até 45 minutos
+•	Você pode usar qualquer IDE (IntelliJ, Eclipse, VS Code etc.).
+•	Envie:
+o	O(s) arquivo(s) .java do exercício de código
+o	As respostas das questões teóricas em um arquivo .txt, .md ou no corpo do e-mail.
+________________________________________
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Parte 1 – Conceitos rápidos (teórico – 10 a 15 minutos)
+Responda de forma curta e objetiva.
+1.	Diferença entre List, Set e Map em Java.
+Explique em 2–3 linhas quando você usaria cada um.
+R: 
+ 1 List: coleção ordenada que permite elementos repetidos. Uso quando preciso manter ordem ou acessar por índice.
+EXEMPLO:
+List<String> nomes = new ArrayList<>();
+nomes.add("Felipe");
+nomes.add("Felipe"); // repetido — permitido
+System.out.println(nomes.get(0)); // Acessa por índice
+
+2  Set: não permite elementos repetidos e não garante ordem (HashSet). Uso quando preciso evitar duplicações.
+EXEMPLO: 
+Set<String> nomes = new HashSet<>();
+nomes.add("Felipe");
+nomes.add("Felipe"); // repetido — ignorado
+System.out.println(nomes); // Só aparece 1 Felipe
+3  Map: estrutura de chave-valor. Uso quando preciso associar uma chave única a um valor (ex: ID → objeto).
+EXEMPLO: 
+Map<String, String> dados = new HashMap<>();
+dados.put("nome", "Felipe");
+dados.put("cidade", "São Paulo");
+dados.put("nome", "Martins"); // substitui o valor anterior
+
+
+
+
+
+2.	No código abaixo, o que está errado ou pode dar problema?
+List<String> nomes = null;
+if (nomes.size() > 0) {
+    System.out.println(nomes.get(0));
+}
+a)	O que pode acontecer ao executar?
+R:  Vai gerar NullPointerException, pois o valor definido está nula.
+
+b)	Como você corrigiria isso de forma simples?
+R: Inicializar a lista antes de usar, assim:
+List<String> nomes =       new ArrayList<>();
+
+Ou 
+
+if (nomes != null && !nomes.isEmpty()) {     System.out.println("Essa condição não será atendida, a não ser que o a lista seja inicializada e/ou apresente um valor, além dela só mascarar o problema, não solicioná-lo");
+ }
+
+
+
+
+
+
+
+
+
+
+
+
+
+3.	Explique a diferença entre checked exception e unchecked exception em Java, com um exemplo de cada (pode ser só o nome das exceções).
+Checked Exceptions → "Erros Externos"
+•	IO (Input/Output): IOException, FileNotFoundException
+•	Banco de dados: SQLException
+•	Rede: SocketException, ConnectException
+•	Reflexão: ClassNotFoundException
+Unchecked Exceptions → "Erros de Programação"
+•	Aritméticos: ArithmeticException (divisão por zero)
+•	Null: NullPointerException (tentar usar null)
+•	Arrays: ArrayIndexOutOfBoundsException (índice inválido)
+•	Argumentos: IllegalArgumentException (parâmetro inválido)
+•	Cast: ClassCastException (cast inválido)
+
+4.	// CHECKED exception - COMPILADOR OBRIGA tratamento
+5.	public void lerArquivo() {
+6.	    FileReader reader = new FileReader("arquivo.txt"); //  ERRO DE COMPILAÇÃO!
+7.	    // Compilador diz: "Trate isso ou declare throws!"
+8.	}
+9.	
+10.	// Soluções OBRIGATÓRIAS:
+11.	// Opção 1: try/catch 
+12.	public void lerArquivo() {
+13.	    try {
+14.	        FileReader reader = new FileReader("arquivo.txt");
+15.	    } catch (FileNotFoundException e) { // OBRIGATÓRIO
+16.	        // tratar
+17.	    }
+18.	}
+19.	
+20.	// Opção 2: throws ✅  
+21.	public void lerArquivo() throws FileNotFoundException { // OBRIGATÓRIO
+22.	    FileReader reader = new FileReader("arquivo.txt");
+23.	}
+24.	
+25.	/////////////////////////////////////////////////////////////////
+26.	
+27.	// UNCHECKED exception - COMPILADOR NÃO LIGA
+28.	public void dividir(int a, int b) {
+29.	    return a / b; //  Pode dar ArithmeticException, mas compilador não reclama
+30.	}
+31.	
+32.	// Você PODE tratar se QUISER (mas não é obrigado):
+33.	public void dividir(int a, int b) {
+34.	    try {
+35.	        return a / b;
+36.	    } catch (ArithmeticException e) { // OPCIONAL
+37.	        return 0;
+38.	    }
+39.	}
+40.	Sobre orientação a objetos, descreva em 1–2 frases o que é:
+o	Encapsulamento
+R: É o princípio de esconder os detalhes internos de um objeto e controlar o acesso aos seus dados através de métodos, protegendo a integridade do estado PRIVATE, PROTECTED PUBLIC 
+o	Herança
+R: É o mecanismo que permite que uma classe (filha) herde atributos e métodos de outra classe (pai), promovendo reutilização e organização hierárquica do código. 
+> (Herança entre classes)  EXTENDS  
+> ( Implementação de interfaces) IMPLEMENTS
+>  (@Override opcional mas recomendado pra indicar sobrescrita de método)  
+class Animal {
+    public void emitirSom() {
+        System.out.println("Som genérico");
+    }
+}
+
+class Cachorro extends Animal {  //  EXTENDS
+    @Override  // ← @OVERRIDE
+    public void emitirSom() {
+        System.out.println("Au au!");  // Sobrescreveu
+    }
+}
+
+class Gato extends Animal implements Pet {  // EXTENDS + IMPLEMENTS
+    @Override
+    public void emitirSom() {
+        System.out.println("Miau!");
+    }
+    
+    @Override
+    public void brincar() {  //  Método da interface
+        System.out.println("Gato brincando");
+    }
+}
+
+41.	Em APIs Java (ex: REST), por que é importante não colocar regras de negócio diretamente no controller? Onde essas regras deveriam ficar?
+Viola um dos princípios SOLID
+Single Responsability Principle
+Cria acoplamento entre framwork web e lógica de negócio, afinal o controller  serve para receber HTTP e em seguida chama o Service que de fato cuida da lógica/regra de negócio. 
+No geral gera uma série de problemas de escalabilidade e manutenção. 
+
+
+
+Parte 2 – Exercício de código (principal – 20 a 30 minutos)
+Contexto
+Você foi contratado para criar uma pequena funcionalidade de controle de pedidos em uma loja.
+Um pedido possui:
+•	id (long)
+•	cliente (String)
+•	lista de itens do pedido
+•	cada item tem: descricao (String), quantidade (int), precoUnitario (double)
+Você deve:
+1.	Criar as classes:
+o	ItemPedido
+o	Pedido
+2.	Na classe Pedido, implementar:
+o	Um método double calcularTotal() que devolve o valor total do pedido.
+o	Um método void adicionarItem(ItemPedido item) para adicionar itens.
+3.	Criar uma classe Main (ou Aplicacao) com o método main que:
+o	Cria um pedido para um cliente chamado "João".
+o	Adiciona pelo menos 3 itens com quantidade e preço.
+o	Imprime:
+	o nome do cliente
+	a quantidade total de itens
+	o valor total do pedido
+
+Requisitos mínimos
+•	Usar List<ItemPedido> na classe Pedido.
+•	Fazer validações simples:
+o	Se a quantidade for menor ou igual a zero, não deve adicionar o item.
+o	Se o preço for menor ou igual a zero, não deve adicionar o item.
+Você pode decidir:
+•	Como tratar itens inválidos (por exemplo, ignorar e mostrar uma mensagem no System.out, ou lançar uma exceção simples).
+
+Exemplo de saída esperada (apenas referência, não precisa ser idêntico)
+Cliente: João
+Itens no pedido: 3
+Valor total: 157.50
+
+
+Parte 3 – Refatoração rápida (5 a 10 minutos)
+Leia o código abaixo e responda:
+public class CalculadoraDesconto {
+    public double aplicarDesconto(double valor, String tipoCliente) {
+        if (tipoCliente.equals("VIP")) {
+            return valor * 0.8;
+        } else if (tipoCliente.equals("NOVO")) {
+            return valor * 0.9;
+        } else if (tipoCliente.equals("FUNCIONARIO")) {
+            return valor * 0.7;
+        } else {
+            return valor;
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+Cite dois problemas ou pontos fracos desse código (pense em manutenção/extensibilidade).
+R:
+1 Violação do Princípio Open/Closed - Para adicionar um novo tipo de desconto, precisa modificar a classe existente.
+2 Strings mágicas - Uso de literais "VIP", "NOVO", "FUNCIONARIO" que podem causar erros de digitação e são difíceis de manter
+
+
+
+
+
+
+
+Sugira uma forma melhor de organizar essa lógica (pode ser apenas descrição em texto ou um pseudo-código simples, não precisa implementar tudo).
+R:
+Usar ENUM para os tipos de cliente e Strategy Pattern para descontos, minando a possibilidade de quebrar o código alterando diretamente na classe.
+
+public enum TipoCliente {
+    VIP(0.2),
+    NOVO(0.1),
+    FUNCIONARIO(0.3),
+    COMUM(0.0);
+    
+    private final double desconto;
+    
+    TipoCliente(double desconto) {
+        this.desconto = desconto;
+    }
+    
+    public double calcularDesconto(double valor) {
+        return valor * (1 - desconto);
+    }
+}
+
+// Uso:
+public class CalculadoraDesconto {
+    public double aplicarDesconto(double valor, TipoCliente tipoCliente) {
+        return tipoCliente.calcularDesconto(valor);
+    }
+}
